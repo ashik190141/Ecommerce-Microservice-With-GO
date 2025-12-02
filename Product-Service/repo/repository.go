@@ -39,7 +39,7 @@ func (r *ProductRepository) GetProductByID(id int) (dto.GetProductResponse, stri
 	return dto.GetProductResponse{}, "not implemented"
 }
 
-func (r *ProductRepository) UpdateProduct(id int) bool {
+func (r *ProductRepository) UpdateProduct(id int, product dto.CreateProductDTO) bool {
 	return false
 }
 

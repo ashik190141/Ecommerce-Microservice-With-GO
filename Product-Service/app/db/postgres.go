@@ -1,8 +1,8 @@
 package db
 
 import (
-	"Product-Service/config"
 	"log"
+	"os"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -10,7 +10,7 @@ import (
 
 
 func ConnectPostgres() *sqlx.DB {
-	dsn := config.LoadEnvData().DATABASE_URL
+	dsn := os.Getenv("DATABASE_URL")
 
 	if dsn == "" {
 		log.Fatalln("Error: DATABASE_URL environment variable is not set.")

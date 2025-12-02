@@ -10,5 +10,5 @@ type User struct {
 type AuthRepository interface {
 	CreateUser(name string, email string, password string) (User, string, error)
 	GetUserByEmail(email string) (bool, error)
-	LoginUser(email string, password string) (User, error)
+	LoginUser(email string, password string) (User, string, error)
 }

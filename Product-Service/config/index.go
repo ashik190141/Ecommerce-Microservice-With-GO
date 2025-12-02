@@ -19,7 +19,7 @@ func LoadEnvData() *AppConfig {
 	}
 
 	config := &AppConfig{
-		ProductServicePort:     os.Getenv("AuthServicePort"),
+		ProductServicePort:     os.Getenv("ProductServicePort"),
 		DATABASE_URL:           os.Getenv("DATABASE_URL"),
 		GrpcUserServiceUrl:     os.Getenv("USER_GRPC_URL"),
 		GRPCProductServicePort: os.Getenv("GRPCProductServicePort"),

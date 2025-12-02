@@ -23,6 +23,11 @@ type CreatedUserResponse struct {
 	Token string          `json:"token"`
 }
 
+type CreatedLoginResponse struct {
+	User  Login `json:"user"`
+	Token string          `json:"token"`
+}
+
 func CreateUserService(r *http.Request, repo interfaces.AuthRepository) helpers.ApiResponse[CreatedUserResponse] {
 	var user CreateUser
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -45,13 +50,18 @@ func CreateUserService(r *http.Request, repo interfaces.AuthRepository) helpers.
 	return *helpers.StandardApiResponse(true, http.StatusCreated, "User created successfully", createdUserResponse)
 }
 
-func AuthLoginService(r *http.Request, repo interfaces.AuthRepository) helpers.ApiResponse[Login] {
+func AuthLoginService(r *http.Request, repo interfaces.AuthRepository) helpers.ApiResponse[CreatedLoginResponse] {
 	var loginUser Login
 	json.NewDecoder(r.Body).Decode(&loginUser)
-	_, err := repo.LoginUser(loginUser.Email, loginUser.Password)
+	_, token, err := repo.LoginUser(loginUser.Email, loginUser.Password)
 
 	if err != nil {
-		return *helpers.StandardApiResponse(false, http.StatusInternalServerError, "Login Failed", Login{})
+		return *helpers.StandardApiResponse(false, http.StatusInternalServerError, "Login Failed", CreatedLoginResponse{})
 	}
-	return *helpers.StandardApiResponse(true, http.StatusOK, "Login successful", loginUser)
+
+	createdLoginResponse := CreatedLoginResponse{
+		User:  loginUser,
+		Token: token,
+	}
+	return *helpers.StandardApiResponse(true, http.StatusOK, "Login successful", createdLoginResponse)
 }

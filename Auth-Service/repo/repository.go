@@ -100,14 +100,14 @@ func (r *UserRepository) IsUserExist(email string) bool {
 	return exists
 }
 
-func (r *UserRepository) LoginUser(email string, password string) (interfaces.User, error) {
+func (r *UserRepository) LoginUser(email string, password string) (interfaces.User, string, error) {
 	ctx := r.ctx
     if ctx == nil {
         ctx = context.Background()
     }
 
     if r.db == nil {
-        return interfaces.User{}, fmt.Errorf("db connection is nil")
+        return interfaces.User{}, "", fmt.Errorf("db connection is nil")
     }
 
     query := `
@@ -118,16 +118,22 @@ func (r *UserRepository) LoginUser(email string, password string) (interfaces.Us
     var user interfaces.User
     if err := r.db.GetContext(ctx, &user, query, email); err != nil {
         if err == sql.ErrNoRows {
-            return interfaces.User{}, fmt.Errorf("invalid credentials")
+            return interfaces.User{},"", fmt.Errorf("invalid credentials")
         }
-        return interfaces.User{}, err
+        return interfaces.User{}, "", err
     }
 
     if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-        return interfaces.User{}, fmt.Errorf("invalid password")
+        return interfaces.User{}, "", fmt.Errorf("invalid password")
     }
 
-    return user, nil
+	jwtService := jwt.JwtServices{}
+	tokenData, err := jwtService.GenerateToken(user.Email)
+	if err != nil {
+		return interfaces.User{},"",err
+	}
+
+    return user, tokenData.Token, nil
 }
 
 func HashPassword(password string) (string) {
