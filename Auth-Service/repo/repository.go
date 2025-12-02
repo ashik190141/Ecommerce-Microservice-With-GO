@@ -101,27 +101,30 @@ func HashPassword(password string) (string) {
 
 func (r *UserRepository) LoginUser(email string, password string) (interfaces.User, error) {
 	ctx := r.ctx
-	if ctx == nil {
-		ctx = context.Background()
-	}
+    if ctx == nil {
+        ctx = context.Background()
+    }
 
-	query := `
-		SELECT id, name, email, password
-		FROM users
-		WHERE email = $1;
-	`
-	var user interfaces.User
+    if r.db == nil {
+        return interfaces.User{}, fmt.Errorf("db connection is nil")
+    }
 
-	if err := r.db.GetContext(ctx, &user, query, email); err != nil {
-		if err == sql.ErrNoRows {
-			return interfaces.User{}, fmt.Errorf("invalid credentials")
-		}
-		return interfaces.User{}, err
-	}
+    query := `
+        SELECT id, name, email, password
+        FROM users
+        WHERE email = $1;
+    `
+    var user interfaces.User
+    if err := r.db.GetContext(ctx, &user, query, email); err != nil {
+        if err == sql.ErrNoRows {
+            return interfaces.User{}, fmt.Errorf("invalid credentials")
+        }
+        return interfaces.User{}, err
+    }
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return interfaces.User{}, fmt.Errorf("invalid Password")
-	}
+    if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+        return interfaces.User{}, fmt.Errorf("invalid password")
+    }
 
-	return user, nil
+    return user, nil
 }

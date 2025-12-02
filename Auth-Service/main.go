@@ -17,7 +17,6 @@ func main() {
 
 	database := db.GetDBConnection()
 	userRepo := repo.NewUserRepository(database)
-	// defer database.Close()
 
 	router := route.Route(userRepo)
 
