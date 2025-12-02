@@ -9,6 +9,7 @@ import (
 type AppConfig struct {
 	AuthServicePort     string
 	SecretKey 			string
+	GRPCAuthServicePort string
 }
 
 func LoadEnvData() *AppConfig {
@@ -20,6 +21,7 @@ func LoadEnvData() *AppConfig {
 	config := &AppConfig{
 		AuthServicePort: os.Getenv("AuthServicePort"),
 		SecretKey: 	os.Getenv("SECRET_KEY"),
+		GRPCAuthServicePort: os.Getenv("GRPCAuthServicePort"),
 	}
 
 	return config

@@ -7,7 +7,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-
+	pb "Auth-Service/grpc/grpc"
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -15,6 +15,7 @@ import (
 type UserRepository struct {
 	db *sqlx.DB
 	ctx context.Context
+	pb.UnimplementedProductServiceServer
 }
 
 func NewUserRepository(db *sqlx.DB) interfaces.AuthRepository {
@@ -91,12 +92,12 @@ func (r *UserRepository) GetUserByEmail(email string) (bool, error) {
 	return true, nil
 }
 
-func HashPassword(password string) (string) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+func (r *UserRepository) IsUserExist(email string) bool {
+	exists, err := r.GetUserByEmail(email)
 	if err != nil {
-		return password
+		return false
 	}
-	return string(bytes)
+	return exists
 }
 
 func (r *UserRepository) LoginUser(email string, password string) (interfaces.User, error) {
@@ -127,4 +128,12 @@ func (r *UserRepository) LoginUser(email string, password string) (interfaces.Us
     }
 
     return user, nil
+}
+
+func HashPassword(password string) (string) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return password
+	}
+	return string(bytes)
 }

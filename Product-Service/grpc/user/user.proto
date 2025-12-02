@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "./grpc";
+package grpc;
+
+service ProductService {
+    rpc IsUserExist(IsUserExistRequest) returns (IsUserExistResponse);
+}
+
+message IsUserExistRequest {
+    string email = 1;
+}
+
+message IsUserExistResponse {
+    bool success = 1;
+}

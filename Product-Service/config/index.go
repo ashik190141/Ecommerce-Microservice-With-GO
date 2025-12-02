@@ -6,8 +6,10 @@ import (
 )
 
 type AppConfig struct {
-	ProductServicePort string
-	DATABASE_URL       string
+	ProductServicePort     string
+	DATABASE_URL           string
+	GrpcUserServiceUrl     string
+	GRPCProductServicePort string
 }
 
 func LoadEnvData() *AppConfig {
@@ -17,8 +19,10 @@ func LoadEnvData() *AppConfig {
 	}
 
 	config := &AppConfig{
-		ProductServicePort: os.Getenv("AuthServicePort"),
-		DATABASE_URL:       os.Getenv("DATABASE_URL"),
+		ProductServicePort:     os.Getenv("AuthServicePort"),
+		DATABASE_URL:           os.Getenv("DATABASE_URL"),
+		GrpcUserServiceUrl:     os.Getenv("USER_GRPC_URL"),
+		GRPCProductServicePort: os.Getenv("GRPCProductServicePort"),
 	}
 
 	return config

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        v6.33.1
-// source: product.proto
+// source: user.proto
 
 package grpc
 
@@ -23,14 +23,14 @@ const (
 
 type IsUserExistRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *IsUserExistRequest) Reset() {
 	*x = IsUserExistRequest{}
-	mi := &file_product_proto_msgTypes[0]
+	mi := &file_user_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *IsUserExistRequest) String() string {
 func (*IsUserExistRequest) ProtoMessage() {}
 
 func (x *IsUserExistRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_product_proto_msgTypes[0]
+	mi := &file_user_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,14 +55,14 @@ func (x *IsUserExistRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsUserExistRequest.ProtoReflect.Descriptor instead.
 func (*IsUserExistRequest) Descriptor() ([]byte, []int) {
-	return file_product_proto_rawDescGZIP(), []int{0}
+	return file_user_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *IsUserExistRequest) GetUserId() int32 {
+func (x *IsUserExistRequest) GetEmail() string {
 	if x != nil {
-		return x.UserId
+		return x.Email
 	}
-	return 0
+	return ""
 }
 
 type IsUserExistResponse struct {
@@ -74,7 +74,7 @@ type IsUserExistResponse struct {
 
 func (x *IsUserExistResponse) Reset() {
 	*x = IsUserExistResponse{}
-	mi := &file_product_proto_msgTypes[1]
+	mi := &file_user_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -86,7 +86,7 @@ func (x *IsUserExistResponse) String() string {
 func (*IsUserExistResponse) ProtoMessage() {}
 
 func (x *IsUserExistResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_product_proto_msgTypes[1]
+	mi := &file_user_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -99,7 +99,7 @@ func (x *IsUserExistResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsUserExistResponse.ProtoReflect.Descriptor instead.
 func (*IsUserExistResponse) Descriptor() ([]byte, []int) {
-	return file_product_proto_rawDescGZIP(), []int{1}
+	return file_user_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *IsUserExistResponse) GetSuccess() bool {
@@ -109,36 +109,37 @@ func (x *IsUserExistResponse) GetSuccess() bool {
 	return false
 }
 
-var File_product_proto protoreflect.FileDescriptor
+var File_user_proto protoreflect.FileDescriptor
 
-const file_product_proto_rawDesc = "" +
+const file_user_proto_rawDesc = "" +
 	"\n" +
-	"\rproduct.proto\x12\x04grpc\",\n" +
-	"\x12IsUserExistRequest\x12\x16\n" +
-	"\x06userId\x18\x01 \x01(\x05R\x06userId\"/\n" +
+	"\n" +
+	"user.proto\x12\x04grpc\"*\n" +
+	"\x12IsUserExistRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\"/\n" +
 	"\x13IsUserExistResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess2T\n" +
 	"\x0eProductService\x12B\n" +
 	"\vIsUserExist\x12\x18.grpc.IsUserExistRequest\x1a\x19.grpc.IsUserExistResponseB\bZ\x06./grpcb\x06proto3"
 
 var (
-	file_product_proto_rawDescOnce sync.Once
-	file_product_proto_rawDescData []byte
+	file_user_proto_rawDescOnce sync.Once
+	file_user_proto_rawDescData []byte
 )
 
-func file_product_proto_rawDescGZIP() []byte {
-	file_product_proto_rawDescOnce.Do(func() {
-		file_product_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_product_proto_rawDesc), len(file_product_proto_rawDesc)))
+func file_user_proto_rawDescGZIP() []byte {
+	file_user_proto_rawDescOnce.Do(func() {
+		file_user_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_user_proto_rawDesc), len(file_user_proto_rawDesc)))
 	})
-	return file_product_proto_rawDescData
+	return file_user_proto_rawDescData
 }
 
-var file_product_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_product_proto_goTypes = []any{
+var file_user_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_user_proto_goTypes = []any{
 	(*IsUserExistRequest)(nil),  // 0: grpc.IsUserExistRequest
 	(*IsUserExistResponse)(nil), // 1: grpc.IsUserExistResponse
 }
-var file_product_proto_depIdxs = []int32{
+var file_user_proto_depIdxs = []int32{
 	0, // 0: grpc.ProductService.IsUserExist:input_type -> grpc.IsUserExistRequest
 	1, // 1: grpc.ProductService.IsUserExist:output_type -> grpc.IsUserExistResponse
 	1, // [1:2] is the sub-list for method output_type
@@ -148,26 +149,26 @@ var file_product_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_product_proto_init() }
-func file_product_proto_init() {
-	if File_product_proto != nil {
+func init() { file_user_proto_init() }
+func file_user_proto_init() {
+	if File_user_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_product_proto_rawDesc), len(file_product_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_proto_rawDesc), len(file_user_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_product_proto_goTypes,
-		DependencyIndexes: file_product_proto_depIdxs,
-		MessageInfos:      file_product_proto_msgTypes,
+		GoTypes:           file_user_proto_goTypes,
+		DependencyIndexes: file_user_proto_depIdxs,
+		MessageInfos:      file_user_proto_msgTypes,
 	}.Build()
-	File_product_proto = out.File
-	file_product_proto_goTypes = nil
-	file_product_proto_depIdxs = nil
+	File_user_proto = out.File
+	file_user_proto_goTypes = nil
+	file_user_proto_depIdxs = nil
 }
