@@ -19,3 +19,8 @@ func (h *ProductHandler) CreateProductHandler(w http.ResponseWriter, r *http.Req
 	response := h.service.CreateProductService(r, h.repo)
 	json.NewEncoder(w).Encode(response)
 }
+
+func (h *ProductHandler) GetProductsHandler(w http.ResponseWriter, r *http.Request) {
+	response := h.service.GetProductService(r, h.repo)
+	json.NewEncoder(w).Encode(response)
+}

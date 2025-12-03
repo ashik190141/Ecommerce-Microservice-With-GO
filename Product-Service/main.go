@@ -1,13 +1,15 @@
 package main
 
 import (
+	"Product-Service/app/db"
+	"Product-Service/app/route"
 	"Product-Service/config"
+	grpc_client "Product-Service/handler"
+	repo "Product-Service/repo"
 	"log"
 	"net"
 	"net/http"
-	"Product-Service/app/db"
-	grpc_client "Product-Service/handler"
-	repo "Product-Service/repo"
+	service "Product-Service/service"
 	"google.golang.org/grpc"
 )
 
@@ -15,12 +17,15 @@ func main() {
 	cfg := config.LoadEnvData()
 	address := ":" + cfg.ProductServicePort
 
-	databse:= db.ConnectPostgres()
-	repo.NewProductRepository(databse)
+	database:= db.ConnectPostgres()
+	productRepo := repo.NewProductRepository(database)
 	userClient := grpc_client.NewUserClient(cfg.GrpcUserServiceUrl)
+	productSrv := service.NewProductService(productRepo, userClient)
 
 	grpcServer:= grpc.NewServer()
 	grpc_client.NewProductGRPCServer(userClient)
+
+	router := route.Route(productRepo, productSrv)
 
 	lis, err := net.Listen("tcp", ":"+cfg.GRPCProductServicePort)
 	if err != nil {
@@ -36,7 +41,7 @@ func main() {
 	}()
 
 	log.Printf("HTTP Product Service running on port %s", cfg.ProductServicePort)
-	if err := http.ListenAndServe(address, nil); err != nil {
+	if err := http.ListenAndServe(address, router); err != nil {
 		log.Fatal("Failed to start server: ", err)
 	}
 }

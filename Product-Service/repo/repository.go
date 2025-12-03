@@ -21,18 +21,25 @@ func NewProductRepository(db *sqlx.DB) interfaces.ProductInterface {
 	}
 }
 
-func (r *ProductRepository) CreateProduct(product dto.CreateProductDTO) (bool) {
+func (r *ProductRepository) CreateProduct(product dto.CreateProductDTO) dto.GetProductResponse {
 	query := `
-        INSERT INTO products (name, price, stock, userEmail, sku)
+        INSERT INTO products (name, price, stock, useremail, sku)
         VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, name, price, stock, useremail, sku, created_at, updated_at
     `
-	if err := r.db.QueryRowContext(r.ctx, query, product.Name, product.Price, product.Stock, product.Email, product.Sku).Scan(&product.Name, &product.Price, &product.Stock, &product.Email, &product.Sku); err != nil {
+
+	var createdProduct dto.GetProductResponse
+
+	err := r.db.QueryRowContext(r.ctx, query, product.Name, product.Price, product.Stock, product.Email, product.Sku).Scan(&createdProduct.Id, &createdProduct.Name, &createdProduct.Price, &createdProduct.Stock, &createdProduct.Email, &createdProduct.Sku, &createdProduct.CreatedAt, &createdProduct.UpdatedAt)
+
+	if err != nil {
 		if strings.Contains(err.Error(), "SQLSTATE 23505") {
-			return false
+			return dto.GetProductResponse{}
 		}
-		return false
+		return dto.GetProductResponse{}
 	}
-	return true
+
+	return createdProduct
 }
 
 func (r *ProductRepository) GetProductByID(id int) (dto.GetProductResponse, string) {
@@ -48,5 +55,11 @@ func (r *ProductRepository) DeleteProduct(id int) bool {
 }
 
 func (r *ProductRepository) GetProducts() ([]dto.GetProductResponse, error) {
-	return nil, nil
+	var products []dto.GetProductResponse
+	query := `SELECT id, name, price, stock, useremail, sku, created_at, updated_at FROM products`
+	err := r.db.SelectContext(r.ctx, &products, query)
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
 }

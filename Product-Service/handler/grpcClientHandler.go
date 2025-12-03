@@ -15,7 +15,7 @@ type UserClient struct {
 func NewUserClient(authServiceURL string) *UserClient {
 	conn, err := grpc.Dial(authServiceURL, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("Failed to connect to StockService: %v", err)
+		log.Fatalf("Failed to connect to UserService: %v", err)
 	}
 
 	return &UserClient{
@@ -24,5 +24,11 @@ func NewUserClient(authServiceURL string) *UserClient {
 }
 
 func (uc *UserClient) IsUserExist(ctx context.Context, email string) (*userPb.IsUserExistResponse, error) {
-	return uc.client.IsUserExist(ctx, &userPb.IsUserExistRequest{Email: email})
+	resp, err := uc.client.IsUserExist(ctx, &userPb.IsUserExistRequest{Email: email})
+	if err != nil {
+		log.Printf("gRPC IsUserExist() failed: %v", err)
+		return nil, err
+	}
+
+	return resp, nil
 }
