@@ -29,16 +29,16 @@ func (s *JwtServices) GenerateToken(email string) (interfaces.JWT, error) {
 
 func (s *JwtServices) ValidateToken(token string) (bool, error) {
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-      return secretKey, nil
-   })
-   
-   if err != nil {
-      return false, err
-   }
-  
-   if !parsedToken.Valid {
-      return false, fmt.Errorf("invalid token")
-   }
-  
-   return true, nil
+		return secretKey, nil
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	if !parsedToken.Valid {
+		return false, fmt.Errorf("invalid token")
+	}
+
+	return true, nil
 }

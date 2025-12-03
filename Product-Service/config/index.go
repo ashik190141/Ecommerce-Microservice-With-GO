@@ -10,6 +10,7 @@ type AppConfig struct {
 	DATABASE_URL           string
 	GrpcUserServiceUrl     string
 	GRPCProductServicePort string
+	RadisUrl               string
 }
 
 func LoadEnvData() *AppConfig {
@@ -23,6 +24,7 @@ func LoadEnvData() *AppConfig {
 		DATABASE_URL:           os.Getenv("DATABASE_URL"),
 		GrpcUserServiceUrl:     os.Getenv("USER_GRPC_URL"),
 		GRPCProductServicePort: os.Getenv("GRPCProductServicePort"),
+		RadisUrl:               os.Getenv("RADIS_URL"),
 	}
 
 	return config

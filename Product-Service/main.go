@@ -4,6 +4,7 @@ import (
 	"Product-Service/app/db"
 	"Product-Service/app/route"
 	"Product-Service/config"
+	radis "Product-Service/redis"
 	grpc_client "Product-Service/handler"
 	repo "Product-Service/repo"
 	"log"
@@ -24,6 +25,7 @@ func main() {
 
 	grpcServer:= grpc.NewServer()
 	grpc_client.NewProductGRPCServer(userClient)
+	radis.InitializeRedisClient(cfg.RadisUrl)
 
 	router := route.Route(productRepo, productSrv)
 
