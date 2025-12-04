@@ -42,8 +42,14 @@ func (r *ProductRepository) CreateProduct(product dto.CreateProductDTO) dto.GetP
 	return createdProduct
 }
 
-func (r *ProductRepository) GetProductByID(id int) (dto.GetProductResponse, string) {
-	return dto.GetProductResponse{}, "not implemented"
+func (r *ProductRepository) GetProductByID(id int) dto.GetProductResponse {
+	var products dto.GetProductResponse
+	query := `SELECT id, name, price, stock, useremail, sku, created_at, updated_at FROM products WHERE id=$1`
+	err := r.db.GetContext(r.ctx, &products, query, id)
+	if err != nil {
+		return dto.GetProductResponse{}
+	}
+	return products
 }
 
 func (r *ProductRepository) UpdateProduct(id int, product dto.CreateProductDTO) bool {

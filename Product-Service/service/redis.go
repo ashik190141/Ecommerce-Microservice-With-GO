@@ -56,7 +56,7 @@ func (r *RedisService) SetProductToCache(key string, product dto.GetProductRespo
 		return false
 	}
 
-	res1, err := r.redis.HSet(r.ctx, key, product.Sku, data).Result()
+	res1, err := r.redis.HSet(r.ctx, key, product.Id, data).Result()
 	if err != nil || res1 == 0 {
 		log.Println("Failed to cache product:", err)
 		return false
@@ -72,4 +72,21 @@ func (r *RedisService) SetExpireTimeFromCache(key string, duration time.Duration
 	if err != nil {
 		log.Println("Failed to set TTL:", err)
 	}
+}
+
+func (r *RedisService) GetProductByIdFromCache(key string, id string) dto.GetProductResponse {
+	data, err := r.redis.HGet(r.ctx, key, id).Result()
+	if err != nil {
+		log.Println("Failed to get product by ID from cache:", err)
+		return dto.GetProductResponse{}
+	}
+
+	var product dto.GetProductResponse
+	err = json.Unmarshal([]byte(data), &product)
+	if err != nil {
+		log.Println("Failed to unmarshal product:", err)
+		return dto.GetProductResponse{}
+	}
+
+	return product
 }

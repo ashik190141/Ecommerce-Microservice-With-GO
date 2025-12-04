@@ -9,6 +9,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type productService struct {
@@ -51,7 +54,21 @@ func (s *productService) CreateProductService(r *http.Request, repo interfaces.P
 }
 
 func (s *productService) GetByIDProductService(r *http.Request, repo interfaces.ProductInterface) helpers.ApiResponse[dto.GetProductResponse] {
-	return helpers.ApiResponse[dto.GetProductResponse]{}
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return *helpers.StandardApiResponse(false, http.StatusBadRequest, "Invalid ID parameter", dto.GetProductResponse{})
+	}
+	var product dto.GetProductResponse
+	product = s.rdb.GetProductByIdFromCache("products", idStr)
+	log.Println("Product retrieve from cache")
+	if(product == dto.GetProductResponse{}){
+		product = s.repo.GetProductByID(id)
+		log.Println("Product retrieve from database")
+	}
+	
+	return *helpers.StandardApiResponse(true, http.StatusOK, "Product retrieved successfully", product)
 }
 
 func (s *productService) UpdateProductService(r *http.Request, repo interfaces.ProductInterface) helpers.ApiResponse[dto.GetProductResponse] {

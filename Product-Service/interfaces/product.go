@@ -9,7 +9,7 @@ import (
 
 type ProductInterface interface {
 	CreateProduct(product dto.CreateProductDTO) dto.GetProductResponse
-	GetProductByID(id int) (dto.GetProductResponse, string)
+	GetProductByID(id int) (dto.GetProductResponse)
 	UpdateProduct(id int, product dto.CreateProductDTO) bool
 	DeleteProduct(id int) bool
 	GetProducts() ([]dto.GetProductResponse, error)
@@ -25,7 +25,7 @@ type ProductService interface {
 
 type ProductHandler interface {
 	CreateProductHandler(w http.ResponseWriter, r *http.Request)
-	// GetProductByIDHandler(w http.ResponseWriter, r *http.Request)
+	GetProductByIDHandler(w http.ResponseWriter, r *http.Request)
 	// UpdateProductHandler(w http.ResponseWriter, r *http.Request)
 	// DeleteProductHandler(w http.ResponseWriter, r *http.Request)
 	GetProductsHandler(w http.ResponseWriter, r *http.Request)
@@ -34,5 +34,6 @@ type ProductHandler interface {
 type ProductRedis interface {
 	GetProductFromCache(productID string) ([]dto.GetProductResponse, error)
 	SetProductToCache(key string, product dto.GetProductResponse) bool
-	SetExpireTimeFromCache(key string, duration time.Duration) 
+	SetExpireTimeFromCache(key string, duration time.Duration)
+	GetProductByIdFromCache(key string, id string) dto.GetProductResponse
 }
