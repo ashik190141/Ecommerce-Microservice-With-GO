@@ -7,6 +7,7 @@ import (
 	"Product-Service/interfaces"
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -14,10 +15,11 @@ type productService struct {
 	ctx        context.Context
 	repo       interfaces.ProductInterface
 	userClient *client.UserClient
+	rdb        interfaces.ProductRedis
 }
 
-func NewProductService(repo interfaces.ProductInterface, uc *client.UserClient) interfaces.ProductService {
-	return &productService{ctx: context.Background(), repo: repo, userClient: uc}
+func NewProductService(repo interfaces.ProductInterface, uc *client.UserClient, redis interfaces.ProductRedis) interfaces.ProductService {
+	return &productService{ctx: context.Background(), repo: repo, userClient: uc, rdb: redis}
 }
 
 func (s *productService) CreateProductService(r *http.Request, repo interfaces.ProductInterface) helpers.ApiResponse[dto.GetProductResponse] {
@@ -40,7 +42,12 @@ func (s *productService) CreateProductService(r *http.Request, repo interfaces.P
 		return *helpers.StandardApiResponse(false, http.StatusInternalServerError, "Failed to create product", dto.GetProductResponse{})
 	}
 
-	return *helpers.StandardApiResponse(false, http.StatusOK, "Create Product Successfully", created)
+	isSuccess := s.rdb.SetProductToCache("products", created)
+	if !isSuccess {
+		return *helpers.StandardApiResponse(false, http.StatusInternalServerError, "Create product successfully but Failed to cache product", created)
+	}
+
+	return *helpers.StandardApiResponse(true, http.StatusOK, "Create Product Successfully", created)
 }
 
 func (s *productService) GetByIDProductService(r *http.Request, repo interfaces.ProductInterface) helpers.ApiResponse[dto.GetProductResponse] {
@@ -56,9 +63,22 @@ func (s *productService) DeleteProductService(r *http.Request, repo interfaces.P
 }
 
 func (s *productService) GetProductService(r *http.Request, repo interfaces.ProductInterface) helpers.ApiResponse[[]dto.GetProductResponse] {
-	products, err := repo.GetProducts()
-	if err != nil {
-		return *helpers.StandardApiResponse(false, http.StatusInternalServerError, "Failed to get products", []dto.GetProductResponse{})
+	var products []dto.GetProductResponse
+	productsFromCache, err := s.rdb.GetProductFromCache("products")
+	if productsFromCache == nil || err != nil {
+		productsFromDb, err := repo.GetProducts()
+		if err != nil {
+			return *helpers.StandardApiResponse(false, http.StatusInternalServerError, "Failed to get products", []dto.GetProductResponse{})
+		}
+		for _, p := range productsFromDb {
+			isSuccess := s.rdb.SetProductToCache("products", p)
+			if !isSuccess {
+				log.Println("Failed to cache product with SKU:", p.Sku)
+			}
+		}
+		products = append(products, productsFromDb...)
+	}else{
+		products = append(products, productsFromCache...)
 	}
 	return *helpers.StandardApiResponse(true, http.StatusOK, "Products retrieved successfully", products)
 }

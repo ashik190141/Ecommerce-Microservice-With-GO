@@ -1,9 +1,10 @@
 package interfaces
 
 import (
+	helpers "Product-Service/app/response"
 	"Product-Service/dto"
 	"net/http"
-	helpers "Product-Service/app/response"
+	"time"
 )
 
 type ProductInterface interface {
@@ -28,4 +29,10 @@ type ProductHandler interface {
 	// UpdateProductHandler(w http.ResponseWriter, r *http.Request)
 	// DeleteProductHandler(w http.ResponseWriter, r *http.Request)
 	GetProductsHandler(w http.ResponseWriter, r *http.Request)
+}
+
+type ProductRedis interface {
+	GetProductFromCache(productID string) ([]dto.GetProductResponse, error)
+	SetProductToCache(key string, product dto.GetProductResponse) bool
+	SetExpireTimeFromCache(key string, duration time.Duration) 
 }

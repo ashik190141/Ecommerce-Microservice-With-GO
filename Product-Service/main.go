@@ -19,13 +19,16 @@ func main() {
 	address := ":" + cfg.ProductServicePort
 
 	database:= db.ConnectPostgres()
+
+	rdb:= radis.InitializeRedisClient(cfg.RadisUrl)
+	redisServ:= service.NewRedisService(rdb)
+
 	productRepo := repo.NewProductRepository(database)
 	userClient := grpc_client.NewUserClient(cfg.GrpcUserServiceUrl)
-	productSrv := service.NewProductService(productRepo, userClient)
+	productSrv := service.NewProductService(productRepo, userClient, redisServ)
 
 	grpcServer:= grpc.NewServer()
 	grpc_client.NewProductGRPCServer(userClient)
-	radis.InitializeRedisClient(cfg.RadisUrl)
 
 	router := route.Route(productRepo, productSrv)
 
