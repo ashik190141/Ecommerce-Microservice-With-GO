@@ -29,3 +29,8 @@ func (h *ProductHandler) GetProductByIDHandler(w http.ResponseWriter, r *http.Re
 	response := h.service.GetByIDProductService(r, h.repo)
 	json.NewEncoder(w).Encode(response)
 }
+
+func (h *ProductHandler) UpdateProductHandler(w http.ResponseWriter, r *http.Request) {
+	response := h.service.UpdateProductService(r, h.repo)
+	json.NewEncoder(w).Encode(response)
+}

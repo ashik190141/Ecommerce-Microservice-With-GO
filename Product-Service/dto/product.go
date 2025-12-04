@@ -8,6 +8,13 @@ type CreateProductDTO struct {
 	Sku   string  `json:"sku" validate:"required"`
 }
 
+type UpdateProductDTO struct {
+	Name  string  `json:"name,omitempty"`
+	Price float64 `json:"price,omitempty" validate:"omitempty,gt=0"`
+	Stock int     `json:"stock,omitempty" validate:"omitempty,gte=0"`
+	Sku   string  `json:"sku,omitempty"`
+}
+
 type GetProductResponse struct {
 	Id int `json:"id" validate:"required"`
 	CreateProductDTO

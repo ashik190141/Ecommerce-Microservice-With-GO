@@ -87,6 +87,6 @@ func (r *RedisService) GetProductByIdFromCache(key string, id string) dto.GetPro
 		log.Println("Failed to unmarshal product:", err)
 		return dto.GetProductResponse{}
 	}
-
+	r.SetExpireTimeFromCache(key, 5*60*time.Second)
 	return product
 }

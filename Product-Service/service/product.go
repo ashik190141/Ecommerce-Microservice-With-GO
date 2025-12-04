@@ -72,7 +72,20 @@ func (s *productService) GetByIDProductService(r *http.Request, repo interfaces.
 }
 
 func (s *productService) UpdateProductService(r *http.Request, repo interfaces.ProductInterface) helpers.ApiResponse[dto.GetProductResponse] {
-	return helpers.ApiResponse[dto.GetProductResponse]{}
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	id, err := strconv.Atoi(idStr)
+	var updateProduct dto.UpdateProductDTO
+	if err != nil {
+		return *helpers.StandardApiResponse(false, http.StatusBadRequest, "Invalid ID parameter", dto.GetProductResponse{})
+	}
+
+	err = json.NewDecoder(r.Body).Decode(&updateProduct)
+	if err != nil {
+		return *helpers.StandardApiResponse(false, http.StatusBadRequest, "Invalid request body", dto.GetProductResponse{})
+	}
+	updated := repo.UpdateProduct(id, updateProduct)
+	return *helpers.StandardApiResponse(true, http.StatusOK, "Product update successfully", updated)
 }
 
 func (s *productService) DeleteProductService(r *http.Request, repo interfaces.ProductInterface) helpers.ApiResponse[dto.GetProductResponse] {
