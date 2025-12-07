@@ -108,7 +108,13 @@ func (r *ProductRepository) UpdateProduct(id int, product dto.UpdateProductDTO) 
 }
 
 func (r *ProductRepository) DeleteProduct(id int) bool {
-	return false
+	if _, err := r.db.ExecContext(
+        r.ctx,
+        `DELETE FROM products
+        WHERE id = $1`, id); err != nil {
+        return false
+    }
+	return true
 }
 
 func (r *ProductRepository) GetProducts() ([]dto.GetProductResponse, error) {

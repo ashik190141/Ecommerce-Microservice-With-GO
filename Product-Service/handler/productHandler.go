@@ -34,3 +34,8 @@ func (h *ProductHandler) UpdateProductHandler(w http.ResponseWriter, r *http.Req
 	response := h.service.UpdateProductService(r, h.repo)
 	json.NewEncoder(w).Encode(response)
 }
+
+func (h *ProductHandler) DeleteProductHandler(w http.ResponseWriter, r *http.Request) {
+	response := h.service.DeleteProductService(r, h.repo)
+	json.NewEncoder(w).Encode(response)
+}

@@ -91,3 +91,23 @@ func (r *RedisService) GetProductByIdFromCache(key string, id string) dto.GetPro
 	r.SetExpireTimeFromCache(key, 5*60*time.Second)
 	return product
 }
+
+func (r *RedisService) IsExistKeyInCache(key string) bool {
+	_, err := r.redis.Exists(r.ctx, key).Result()
+	if err != nil {
+		log.Println("Failed to get key product:", err)
+		return false
+	}
+
+	return true
+}
+
+func (r *RedisService) DeleteProductFromCache(key string, id string) bool {
+	_, err := r.redis.HDel(r.ctx, key, id).Result()
+	if err != nil {
+		log.Println("Failed to delete product from cache:", err)
+		return false
+	}
+
+	return true
+}
