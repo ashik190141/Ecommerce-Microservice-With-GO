@@ -53,11 +53,12 @@ func (r *RedisService) GetProductFromCache(key string) ([]dto.GetProductResponse
 func (r *RedisService) SetProductToCache(key string, product dto.GetProductResponse) bool {
 	data, err := json.Marshal(product)
 	if err != nil {
+		log.Println("Failed to Marshal:", err)
 		return false
 	}
 
-	res1, err := r.redis.HSet(r.ctx, key, product.Id, data).Result()
-	if err != nil || res1 == 0 {
+	_, err = r.redis.HSet(r.ctx, key, product.Id, data).Result()
+	if err != nil {
 		log.Println("Failed to cache product:", err)
 		return false
 	}

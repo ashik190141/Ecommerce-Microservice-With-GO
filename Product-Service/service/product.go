@@ -84,7 +84,17 @@ func (s *productService) UpdateProductService(r *http.Request, repo interfaces.P
 	if err != nil {
 		return *helpers.StandardApiResponse(false, http.StatusBadRequest, "Invalid request body", dto.GetProductResponse{})
 	}
+
 	updated := repo.UpdateProduct(id, updateProduct)
+	if (updated == dto.GetProductResponse{}) {
+		return *helpers.StandardApiResponse(false, http.StatusInternalServerError, "Failed to update product", dto.GetProductResponse{})
+	}
+
+	isSuccess:= s.rdb.SetProductToCache("products", updated)
+	if !isSuccess {
+		return *helpers.StandardApiResponse(false, http.StatusInternalServerError, "Update product successfully but Failed to update cache product", updated)
+	}
+
 	return *helpers.StandardApiResponse(true, http.StatusOK, "Product update successfully", updated)
 }
 
@@ -103,7 +113,7 @@ func (s *productService) GetProductService(r *http.Request, repo interfaces.Prod
 		for _, p := range productsFromDb {
 			isSuccess := s.rdb.SetProductToCache("products", p)
 			if !isSuccess {
-				log.Println("Failed to cache product with SKU:", p.Sku)
+				log.Println("Failed to cache product with Id:", p.Id)
 			}
 		}
 		products = append(products, productsFromDb...)
