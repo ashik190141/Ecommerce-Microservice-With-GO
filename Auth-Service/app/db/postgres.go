@@ -12,9 +12,25 @@ import (
 func ConnectPostgres() *sqlx.DB {
 	dsn := os.Getenv("DATABASE_URL")
 
+	// Build DSN from docker-compose environment variables
 	if dsn == "" {
-		log.Fatalln("Error: DATABASE_URL environment variable is not set.")
+		host := os.Getenv("POSTGRES_HOST")
+		port := os.Getenv("POSTGRES_PORT")
+		user := os.Getenv("POSTGRES_USER")
+		password := os.Getenv("POSTGRES_PASSWORD")
+		dbname := os.Getenv("POSTGRES_DB")
+		
+		if host != "" {
+			dsn = "postgresql://" + user +":" + password + "@" + host +":" + port + "/" + dbname + "?sslmode=disable"
+		} else {
+			log.Fatalln("Error: DATABASE_URL or POSTGRES_* environment variables are not set.")
+		}
 	}
+
+	// Check if DSN is still empty in locally
+	// if dsn == "" {
+	// 	log.Fatalln("Error: DATABASE_URL environment variable is not set.")
+	// }
 
 	const driverName = "postgres"
 

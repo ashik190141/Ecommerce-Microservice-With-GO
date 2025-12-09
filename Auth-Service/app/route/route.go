@@ -14,6 +14,11 @@ func Route(repo interfaces.AuthRepository) *mux.Router {
 
 	router.HandleFunc("/registration", h.CreateUserHandler).Methods("POST")
 	router.HandleFunc("/login", h.LoginHander).Methods("POST")
+
+	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.Write([]byte("OK"))
+	}).Methods("GET")
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("Server is running 🚀"))

@@ -133,7 +133,13 @@ func (s *productService) DeleteProductService(r *http.Request, repo interfaces.P
 
 func (s *productService) GetProductService(r *http.Request, repo interfaces.ProductInterface) helpers.ApiResponse[[]dto.GetProductResponse] {
 	var products []dto.GetProductResponse
-	productsFromCache, err := s.rdb.GetProductFromCache("products")
+	var productsFromCache []dto.GetProductResponse
+	var err error
+
+	isExistKey := s.rdb.IsExistKeyInCache("products")
+	if isExistKey {
+		productsFromCache, err = s.rdb.GetProductFromCache("products")
+	}
 	if productsFromCache == nil || err != nil {
 		productsFromDb, err := repo.GetProducts()
 		if err != nil {

@@ -16,6 +16,11 @@ func Route(repo interfaces.ProductInterface, service interfaces.ProductService) 
 	router.HandleFunc("/get-product/{id}", h.GetProductByIDHandler).Methods("GET")
 	router.HandleFunc("/update-product/{id}", h.UpdateProductHandler).Methods("PUT")
 	router.HandleFunc("/delete-product/{id}", h.DeleteProductHandler).Methods("DELETE")
+	
+	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.Write([]byte("OK"))
+	}).Methods("GET")
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("Server is running"))
