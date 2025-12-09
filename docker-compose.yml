@@ -15,9 +15,9 @@ services:
     image: postgres:15
     container_name: postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 298565
-      POSTGRES_DB: ecommerce
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD: 
+      POSTGRES_DB: 
     ports:
       - "5432:5432"
     healthcheck:
@@ -34,12 +34,12 @@ services:
       - "5000:5000"
       - "8080:8080"
     environment:
-      - POSTGRES_HOST=postgres
+      - POSTGRES_HOST=
       - POSTGRES_PORT=5432
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=298565
-      - POSTGRES_DB=ecommerce
-      - DATABASE_URL=postgresql://postgres:298565@postgres:5432/ecommerce?sslmode=disable
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
+      - POSTGRES_DB=
+      - DATABASE_URL=
     depends_on:
       postgres:
         condition: service_healthy
